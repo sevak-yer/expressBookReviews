@@ -9,20 +9,25 @@ const isValid = (username)=>{ //returns boolean
 //write code to check is the username is valid
 }
 
-const authenticatedUser = (username,password)=>{ //returns boolean
-//write code to check if username and password match the one we have in records.
+const authenticatedUser = (username,password)=>{ 
+    return users.find(user => user.username === username && user.password === password);
 }
 
 //only registered users can login
 regd_users.post("/login", (req,res) => {
-  const user = req.body.user;
+  const {username, password} = req.body.user;
+  const user = authenticatedUser(username,password)
+  
+  console.log(user)
     if (!user) {
-        return res.status(404).json({ message: "Body Empty" });
+        return res.status(404).json({ message: "No such user" });
     }
     // Generate JWT access token
     let accessToken = jwt.sign({
         data: user
     }, 'access', { expiresIn: 60 * 60 });
+
+    console.log('accessToken: ',accessToken)
 
     // Store access token in session
     req.session.authorization = {
