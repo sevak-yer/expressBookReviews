@@ -18,7 +18,6 @@ regd_users.post("/login", (req,res) => {
   const {username, password} = req.body.user;
   const user = authenticatedUser(username,password)
   
-  console.log(user)
     if (!user) {
         return res.status(404).json({ message: "No such user" });
     }
@@ -26,8 +25,6 @@ regd_users.post("/login", (req,res) => {
     let accessToken = jwt.sign({
         data: user
     }, 'access', { expiresIn: 60 * 60 });
-
-    console.log('accessToken: ',accessToken)
 
     // Store access token in session
     req.session.authorization = {
@@ -46,10 +43,6 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
             break;
         }
     }
-    // console.log('review: ', review)
-    // console.log('req.session: ',req.session)
-    // console.log('req.user: ',req.user)
-    console.log('req.user: ',books)
     res.status(200).send("review has been added!");
 });
 
@@ -57,9 +50,7 @@ regd_users.delete("/auth/review/:isbn", (req, res) => {
     const isbn = req.params.isbn;
     for (let key in books) {
         if (books[key].isbn === isbn) {
-            console.log('book before: ',books[key])
             delete books[key].reviews[req.user.data.username]
-            console.log('book after: ',books[key])
             break;
         }
     }
